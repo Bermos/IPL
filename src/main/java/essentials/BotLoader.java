@@ -23,7 +23,7 @@ public class BotLoader {
 				String sqlPW = (String) loginData.get("sqlPW");
 				String sqlDB = (String) loginData.get("sqlDB");
 				String sqlUS = (String) loginData.get("sqlUS");
-				
+				System.out.println(botToken);
 				Listener listener = new Listener(sqlIP, sqlUS, sqlPW, sqlDB);
 				
 				new JDABuilder()

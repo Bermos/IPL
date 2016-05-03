@@ -13,9 +13,10 @@ import org.json.simple.parser.ParseException;
 import net.dv8tion.jda.events.Event;
 import net.dv8tion.jda.events.ReadyEvent;
 import net.dv8tion.jda.events.message.priv.PrivateMessageReceivedEvent;
+import net.dv8tion.jda.hooks.ListenerAdapter;
 
-public class Listener {
-	private final static String VERSION = "0.0.1_1";
+public class Listener extends ListenerAdapter {
+	private final static String VERSION = "0.1.0_2";
 	
 	private static Connection connection;
 	private static String uIDOwner;
@@ -29,17 +30,15 @@ public class Listener {
 			
 			Listener.uIDOwner = (String) data.get("IDOwner");
 			Listener.rIDPvPPart = (String) data.get("IDPvPRole");
-		} catch (IOException | ParseException e1) {
-			e1.printStackTrace();
-		}
 		
 		System.out.println("[Info] Connecting to DB...");
-		try {
-			Listener.connection = DriverManager.getConnection("jdbc:mysql://" + sqlIP + "/" + sqlDB + "?" + "user=" + sqlUS + "&password=" + sqlPW);
+			Listener.connection = DriverManager.getConnection("jdbc:mysql://" + sqlIP + "/" + sqlDB + "?user=" + sqlUS + "&password=" + sqlPW);
 			System.out.println("[Info] Connection to SQL DB established.");
 		} catch (SQLException e) {
 			System.out.println("[Error] There was an error while trying to connect to the DB.");
 			e.printStackTrace();
+		} catch (IOException | ParseException e1) {
+			e1.printStackTrace();
 		}
 	}
 	

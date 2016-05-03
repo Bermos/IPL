@@ -28,5 +28,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Bermos/git/IWBot/discordbot/lib/mysql-connector-java-5.1.38-bin.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
