@@ -29,6 +29,8 @@ public class BotLoader {
 				new JDABuilder()
 					.setBotToken(botToken)
 					.addListener(listener)
+					.setAudioEnabled(false)
+					.setAutoReconnect(true)
 					.buildBlocking();
 				
 			} catch (IOException | ParseException e) {

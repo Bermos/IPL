@@ -113,7 +113,7 @@ public class Listener extends ListenerAdapter {
 				if (player1.equals(player2)) {
 					privChan.sendMessageAsync("[Error] It seems you have played a match against yourself. This incident is recorded.", null);
 					event.getJDA().getUserById(uIDOwner).getPrivateChannel()
-					.sendMessageAsync("[Warning] " + author.getUsername() + "|" + author.getId() + " - played a match against himself.", null);
+					.sendMessageAsync("[Warning] " + author.getUsername() + "|" + author.getId() + " | " + author.getDiscriminator() + " - played a match against himself.", null);
 				}
 				else if (author.equals(player1)) {
 					playerNo = "resultp1";
@@ -142,67 +142,74 @@ public class Listener extends ListenerAdapter {
 							player2.getPrivateChannel().sendMessageAsync(message, null);
 						} else {
 						
-						//Elo calculations
-						//Get old elo
-						ps = connection.prepareStatement("SELECT elo, matches FROM iwmembers.user WHERE iduser = ?");
-						ps.setLong	(1, Long.parseLong(player1.getId()));
-						ResultSet resultSet = ps.executeQuery();
-						resultSet.next();
-						int oldEloP1 = resultSet.getInt("elo");
-						int matchnoP1 = resultSet.getInt("matches");
-						
-						ps = connection.prepareStatement("SELECT elo, matches FROM iwmembers.user WHERE iduser = ?");
-						ps.setLong	(1, Long.parseLong(player2.getId()));
-						resultSet = ps.executeQuery();
-						resultSet.next();
-						int oldEloP2 = resultSet.getInt("elo");
-						int matchnoP2 = resultSet.getInt("matches");
-						
-						int wonP1, wonP2;
-						if(author.equals(player1)) {
-							wonP1 = won; wonP2 = otherWon;
-						} else {
-							wonP2 = won; wonP1 = otherWon;
-						}
-						
-						//calculate new elo
-						double K = (double) 800/(matchnoP1+1);
-						double exp = ((oldEloP2 - oldEloP1) / 400);
-						double E = 1 / (1 + Math.pow(10, exp));
-						int newEloP1 = (int) (oldEloP1 + K * (wonP1 - E));
-						
-						K = (double) 800/(matchnoP2+1);
-						exp = ((oldEloP1 - oldEloP2) / 400);
-						E = 1 / (1 + Math.pow(10, exp));
-						int newEloP2 = (int) (oldEloP2 + K * (wonP2 - E));
-						
-						ps = connection.prepareStatement("UPDATE iwmembers.user SET elo = ?, matches = ? WHERE iduser = ?");
-						ps.setInt	(1, newEloP1);
-						ps.setInt	(2, matchnoP1+1);
-						ps.setLong	(3, Long.parseLong(player1.getId()));
-						ps.executeUpdate();
-						
-						ps = connection.prepareStatement("UPDATE iwmembers.user SET elo = ?, matches = ? WHERE iduser = ?");
-						ps.setInt	(1, newEloP2);
-						ps.setInt	(2, matchnoP2+1);
-						ps.setLong	(3, Long.parseLong(player2.getId()));
-						ps.executeUpdate();
-						
-						ps = connection.prepareStatement("UPDATE iwmembers.pvpmatches SET finished = 1 WHERE idmatch = ?");
-						ps.setInt	(1, idmatch);
-						ps.executeUpdate();
-						
-						String message = "Match outcome confirmed by both players and the results are saved.\n"
-								   + "We hope to see you again in the IW PvP-League!";
-						player1.getPrivateChannel().sendMessageAsync(message, null);
-						player2.getPrivateChannel().sendMessageAsync(message, null);
-						
-						resultSet.close();
-						resultSetMatches.close();
-						ps.close();
-						System.out.println("");
-					} //else otherWon == won
+							//Elo calculations
+							//Get old elo
+							ps.close();
+							ps = connection.prepareStatement("SELECT elo, matches FROM iwmembers.user WHERE iduser = ?");
+							ps.setLong	(1, Long.parseLong(player1.getId()));
+							ResultSet resultSet = ps.executeQuery();
+							resultSet.next();
+							int oldEloP1 = resultSet.getInt("elo");
+							int matchnoP1 = resultSet.getInt("matches");
+							
+							ps.close();
+							ps = connection.prepareStatement("SELECT elo, matches FROM iwmembers.user WHERE iduser = ?");
+							ps.setLong	(1, Long.parseLong(player2.getId()));
+							resultSet.close();
+							resultSet = ps.executeQuery();
+							resultSet.next();
+							int oldEloP2 = resultSet.getInt("elo");
+							int matchnoP2 = resultSet.getInt("matches");
+							
+							int wonP1, wonP2;
+							if(author.equals(player1)) {
+								wonP1 = won; wonP2 = otherWon;
+							} else {
+								wonP2 = won; wonP1 = otherWon;
+							}
+							
+							//calculate new elo
+							double K = (double) 800/(matchnoP1+1);
+							double exp = ((oldEloP2 - oldEloP1) / 400);
+							double E = 1 / (1 + Math.pow(10, exp));
+							int newEloP1 = (int) (oldEloP1 + K * (wonP1 - E));
+							
+							K = (double) 800/(matchnoP2+1);
+							exp = ((oldEloP1 - oldEloP2) / 400);
+							E = 1 / (1 + Math.pow(10, exp));
+							int newEloP2 = (int) (oldEloP2 + K * (wonP2 - E));
+							
+							ps.close();
+							ps = connection.prepareStatement("UPDATE iwmembers.user SET elo = ?, matches = ? WHERE iduser = ?");
+							ps.setInt	(1, newEloP1);
+							ps.setInt	(2, matchnoP1+1);
+							ps.setLong	(3, Long.parseLong(player1.getId()));
+							ps.executeUpdate();
+							
+							ps.close();
+							ps = connection.prepareStatement("UPDATE iwmembers.user SET elo = ?, matches = ? WHERE iduser = ?");
+							ps.setInt	(1, newEloP2);
+							ps.setInt	(2, matchnoP2+1);
+							ps.setLong	(3, Long.parseLong(player2.getId()));
+							ps.executeUpdate();
+							
+							ps.close();
+							ps = connection.prepareStatement("UPDATE iwmembers.pvpmatches SET finished = 1 WHERE idmatch = ?");
+							ps.setInt	(1, idmatch);
+							ps.executeUpdate();
+							
+							String message = "Match outcome confirmed by both players and the results are saved.\n"
+									   + "We hope to see you again in the IW PvP-League!";
+							player1.getPrivateChannel().sendMessageAsync(message, null);
+							player2.getPrivateChannel().sendMessageAsync(message, null);
+							
+							resultSet.close();
+							resultSetMatches.close();
+							ps.close();
+							System.out.println("");
+						} //else otherWon == won
 					} else {	//else 
+						ps.close();
 						ps = connection.prepareStatement("UPDATE iwmembers.pvpmatches SET " + playerNo + " = ? WHERE idmatch = ?");
 						ps.setInt	(1, won);
 						ps.setInt	(2, idmatch);
@@ -212,11 +219,9 @@ public class Listener extends ListenerAdapter {
 						privChan.sendMessageAsync("Successfully stored the outcome. Waiting for confirmation from opponent.", null);
 					}
 				}
-				
 			} else {
 				privChan.sendMessageAsync("[Error] No match with the provided id was found or the match has already been finished.", null);
 			}
-			
 		} catch (NumberFormatException e) {
 			privChan.sendMessageAsync("[Error] Sorry your match id seems to be invalid", null);
 		} catch (SQLException e) {
