@@ -15,7 +15,7 @@ public class BotLoader {
 	public static void main(String[] args) {
 		JSONParser parser = new JSONParser();
 			try {
-				Object obj = parser.parse(new FileReader("C:/Users/Bermos/IPLBot/login.json"));
+				Object obj = parser.parse(new FileReader("./login.json"));
 				JSONObject loginData = (JSONObject) obj;
 				
 				String botToken = (String) loginData.get("discordToken");				
